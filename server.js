@@ -37,28 +37,23 @@ app.get('/todos', function (req, res) {
 // get todo by id
 app.get('/todos/:id', function (req, res) {
       var todoid = parseInt(req.params.id, 10);
-      var matchedTodo = _.findWhere(todos, { id: todoid });
-      /*  var matchedTodo;
-      //iterate over the array to find the match
-todos.forEach(function(todo){
-      if(todoid === todo.id){
-                  matchedTodo =todo;
-      }
-
-});
-*/
+    db.todo.findById(todoid).then(function(todo){
+        
+         if(!!todo){
+            res.json(todo.toJSON());
+         }
+         else{
+             res.status(404).send();
+         }
 
 
-      if (matchedTodo) {
-            res.json(matchedTodo);
-      }
-      else {
-            res.status(400).send();
-      }
+    }).catch(function(e){
+          res.status(500).json(e);
 
+    });
+    
 
-
-
+ 
 });
 //POST
 app.post('/todos', function (req, res) {
@@ -71,22 +66,7 @@ app.post('/todos', function (req, res) {
             res.status(400).json(e); 
      });
      
-      /* //use _.pick to select only description and completed
-
-      if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-            //if body.completed is not bolean and description is not empty string
-            return res.status(400).send();
-
-      }
-
-      body.description = body.description.trim();
-      body.id = todonextID++;
-      todos.push(body);
-
-
-      console.log('description' + ' ' + body.description);
-      res.json(body); */
-
+     
 });
 
 //delete/todos/:id
